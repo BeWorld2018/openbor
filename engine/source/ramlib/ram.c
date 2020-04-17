@@ -26,6 +26,9 @@
 #include <mach/task.h>
 #include <mach/mach.h>
 #include <mach/mach_init.h>
+#elif MORPHOS
+#include <unistd.h>
+#include <proto/exec.h>
 #elif LINUX
 #include <sys/sysinfo.h>
 #include <unistd.h>
@@ -37,7 +40,9 @@
 #include <stdlib.h>
 #endif
 
+#ifndef MORPHOS
 #include <malloc.h>
+#endif
 #include <string.h>
 #include <stdio.h>
 #include "globals.h"
@@ -49,7 +54,7 @@
 
 static u64 systemRam = 0x00000000;
 
-#if !(defined(WIN) || defined(LINUX) || defined(DARWIN))
+#if !(defined(WIN) || defined(LINUX) || defined(DARWIN) || defined(MORPHOS))
 static unsigned long elfOffset = 0x00000000;
 static unsigned long stackSize = 0x00000000;
 #endif
@@ -80,6 +85,8 @@ u64 getFreeRam(int byte_size)
     stat.dwLength = sizeof(MEMORYSTATUSEX);
     GlobalMemoryStatusEx(&stat);
     return stat.ullAvailPhys / byte_size;
+#elif MORPHOS
+	return AvailMem(MEMF_ANY);
 #elif DARWIN
     vm_size_t size;
     unsigned int count = HOST_VM_INFO_COUNT;
@@ -139,6 +146,8 @@ void setSystemRam()
     size_t len = sizeof(mem);
     sysctlbyname("hw.memsize", &mem, &len, NULL, 0);
     systemRam = mem;
+#elif MORPHOS
+	systemRam = AvailMem(MEMF_ANY | MEMF_TOTAL);
 #elif LINUX
     struct sysinfo info;
     sysinfo(&info);
@@ -184,7 +193,7 @@ void setSystemRam()
     stackSize = 0x00000000;
     systemRam = getFreeRam(BYTES);
 #endif
-#if !(defined(WIN) || defined(LINUX) || defined(DARWIN) || defined(SYMBIAN) || defined(VITA))
+#if !(defined(WIN) || defined(LINUX) || defined(DARWIN) || defined(SYMBIAN) || defined(VITA)  || defined(MORPHOS))
     stackSize = (int)&_end - (int)&_start + ((int)&_start - elfOffset);
 #endif
     getRamStatus(BYTES);
@@ -216,6 +225,8 @@ u64 getUsedRam(int byte_size)
         return 0;
     }
     return info.resident_size / byte_size;
+#elif MORPHOS
+	    return (systemRam - getFreeRam(BYTES)) / byte_size;
 #elif LINUX
     unsigned long vm = 0;
     FILE *file = fopen("/proc/self/statm", "r");

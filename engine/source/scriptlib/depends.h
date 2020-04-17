@@ -16,6 +16,11 @@
 #define COMPILED_SCRIPT 1
 #endif
 
+#ifdef MORPHOS
+#define ULONG ULONGBOR
+#define LONG LONGBOR
+#endif
+
 typedef const char *LPCSTR;
 typedef char *LPSTR;
 typedef s32 HRESULT;
@@ -27,7 +32,9 @@ typedef float FLOAT;
 typedef double DOUBLE;
 
 #ifndef WII
+#ifndef MORPHOS
 typedef int BOOL;
+#endif
 #endif
 
 #ifdef VOID

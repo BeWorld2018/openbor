@@ -80,7 +80,11 @@ static unsigned pixelformats[4] = {SDL_PIXELFORMAT_INDEX8, SDL_PIXELFORMAT_BGR56
 
 int SetVideoMode(int w, int h, int bpp, bool gl)
 {
+	#ifdef __MORPHOS__
+	int flags = SDL_WINDOW_SHOWN | SDL_WINDOW_INPUT_FOCUS | SDL_WINDOW_RESIZABLE;
+	#else
 	int flags = SDL_WINDOW_SHOWN | SDL_WINDOW_INPUT_FOCUS;
+	#endif
 	static bool last_gl = false;
 	static int last_x = SDL_WINDOWPOS_UNDEFINED;
 	static int last_y = SDL_WINDOWPOS_UNDEFINED;

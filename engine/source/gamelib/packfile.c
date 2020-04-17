@@ -416,8 +416,10 @@ int openPackfile(const char *filename, const char *packfilename)
     unsigned int magic, version, headerstart, p;
     pnamestruct pn;
 #ifdef LINUX
+#ifndef __MORPHOS__
     char *fspath;
 #endif
+	#endif
 
     h = getFreeHandle();
     if (h == -1)
@@ -458,6 +460,7 @@ int openPackfile(const char *filename, const char *packfilename)
         return h;
     }
 
+#ifndef __MORPHOS__
 #ifdef LINUX
     // Try a case-insensitive search for a separate file.
     fspath = casesearch(".", filename);
@@ -486,7 +489,7 @@ int openPackfile(const char *filename, const char *packfilename)
         }
     }
 #endif
-
+#endif	
 #ifndef WIN
     // Convert slashes to backslashes
     filename = slashback(filename);
@@ -1424,6 +1427,9 @@ void packfile_music_read(fileliststruct *filelist, int dListTotal)
             {
                 goto closepak;
             }
+#ifdef MORPHOS
+			off = SwapLSB32(off);
+#endif
             if(fseek(fd, off, SEEK_SET) < 0)
             {
                 goto closepak;
@@ -1445,7 +1451,11 @@ void packfile_music_read(fileliststruct *filelist, int dListTotal)
                     }
                 }
 nextpak:
-                off += pn.pns_len;
+				#ifdef MORPHOS
+                off += SwapLSB32(pn.pns_len);
+				#else
+				 off += SwapLSB32(pn.pns_len);
+				#endif
                 if(fseek(fd, off, SEEK_SET) < 0)
                 {
                     goto closepak;

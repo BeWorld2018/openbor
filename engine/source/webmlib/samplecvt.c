@@ -72,7 +72,9 @@ void pack_samples(ogg_int32_t **pcm, short *buffer, int samples, int channels)
 void pack_samples(float **pcm, short *buffer, int samples, int channels)
 {
     int i, j;
+    #ifndef __MORPHOS__
     vorbis_fpu_control fpu;
+    #endif
     vorbis_fpu_setround(&fpu);
     for(i=0; i<channels; i++)
     {

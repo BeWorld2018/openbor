@@ -56,6 +56,11 @@
 
 #pragma pack(4)
 
+#ifdef MORPHOS
+#define List ListBor
+#define Node NodeBor
+#endif
+
 typedef struct Node
 {
     struct Node *prev;          //pointer to previous Node

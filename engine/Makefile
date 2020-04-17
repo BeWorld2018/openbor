@@ -22,6 +22,33 @@ endif
 # Defines
 #----------------------------------------------------------------------------------------------------
 
+BUILD_MORPHOS=1
+ifdef BUILD_MORPHOS
+TARGET 	        = $(VERSION_NAME).elf
+TARGET_FINAL    = $(VERSION_NAME)
+TARGET_PLATFORM = MORPHOS
+BUILD_SDL       = 1
+BUILD_GFX       = 1
+#BUILD_WINDOWS   = 0
+BUILD_PTHREAD   = 1
+BUILD_SDL_IO    = 1
+BUILD_OPENGL    = 1
+BUILD_LOADGL    = 1
+BUILD_VORBIS    = 1
+BUILD_WEBM      = 1
+BUILDING        = 1
+YASM 	        = yasm
+#CC  	        = ppc-morphos-gcc-9 -noixemul -D__MORPHOS_SHAREDLIBS -O2
+CC  	        = ppc-morphos-gcc-9  -noixemul -Wno-multistatement-macros -Wno-format-overflow -Wno-stringop-truncation -D__MORPHOS_SHAREDLIBS -O2
+#  -Wno-stringop-overflow -Wno-stringop-truncation
+#CC		= g++ -noixemul
+OBJTYPE         = elf
+STRIP 	        = strip $(TARGET) -o $(TARGET_FINAL)
+INCLUDES        = /usr/local/include/SDL2
+LIBRARIES       = /usr/loca/lib
+#BUILD_DEBUG     = 1
+endif
+
 
 ifdef BUILD_PSP
 TARGET          = $(VERSION_NAME)
@@ -454,6 +481,11 @@ ifdef BUILD_LINUX
 CFLAGS         += -Wno-unused-result `pkg-config sdl2 --cflags`
 endif
 endif
+
+ifdef BUILD_MORPHOS
+CFLAGS         += -noixemul -I/usr/local/include -I/usr/local/include/SDL2 
+endif
+
 
 ifndef BUILD_DEBUG
 CFLAGS 	       += -O2

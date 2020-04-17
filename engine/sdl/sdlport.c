@@ -22,6 +22,12 @@
 #undef main
 #endif
 
+#ifdef __MORPHOS__
+#include "version.h"
+unsigned long __stack = 2000000;
+static const char *version __attribute__((used)) = "$VER: OpenBOR " VERSION " (17.04.2020) port by BeWorld";
+#endif
+
 char packfile[MAX_FILENAME_LEN] = {"bor.pak"};
 #if ANDROID
 #include <unistd.h>

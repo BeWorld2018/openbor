@@ -94,6 +94,13 @@ typedef void DIR;
 #define READ_LOGFILE(type)   type ? fopen(Alog, "rt") : fopen(Aslog, "rt")
 #define COPY_ROOT_PATH(buf, name) strncpy(buf, rootDir, strlen(rootDir)); strncat(buf, name, strlen(name)); strncat(buf, "/", 1);
 #define COPY_PAKS_PATH(buf, name) strncpy(buf, paksDir, strlen(paksDir)); strncat(buf, "/", 1); strncat(buf, name, strlen(name));
+#elif MORPHOS
+#define CHECK_LOGFILE(type)  type ? fileExists("Logs/OpenBorLog.txt") : fileExists("Logs/ScriptLog.txt")
+#define OPEN_LOGFILE(type)   type ? fopen("Logs/OpenBorLog.txt", "wt") : fopen("Logs/ScriptLog.txt", "wt")
+#define APPEND_LOGFILE(type) type ? fopen("Logs/OpenBorLog.txt", "at") : fopen("Logs/ScriptLog.txt", "at")
+#define READ_LOGFILE(type)   type ? fopen("Logs/OpenBorLog.txt", "rt") : fopen("Logs/ScriptLog.txt", "rt")
+#define COPY_ROOT_PATH(buf, name) strcpy(buf, ""); strcat(buf, name); strcat(buf, "/");
+#define COPY_PAKS_PATH(buf, name) strcpy(buf, "Paks/"); strcat(buf, name);
 #else
 #define CHECK_LOGFILE(type)  type ? fileExists("./Logs/OpenBorLog.txt") : fileExists("./Logs/ScriptLog.txt")
 #define OPEN_LOGFILE(type)   type ? fopen("./Logs/OpenBorLog.txt", "wt") : fopen("./Logs/ScriptLog.txt", "wt")
@@ -304,7 +311,9 @@ void *checkAlloc(void *ptr, size_t size, const char *func, const char *file, int
         writeToLogFile("Out of memory!\n");
         writeToLogFile("Allocation of size %i failed in function '%s' at %s:%i.\n", size, func, file, line);
 #ifndef WIN
+		#ifndef MORPHOS
         writeToLogFile("Memory usage at exit: %u\n", mallinfo().arena);
+		#endif
 #endif
         borExit(2);
     }
@@ -409,6 +418,8 @@ void screenshot(s_screen *vscreen, unsigned char *pal, int ingame)
         {
 #if PSP
             sprintf(shotname, "ms0:/PICTURE/Beats Of Rage/%s - ScreenShot - %02u.png", modname, shotnum);
+#elif MORPHOS
+         sprintf(shotname, "ScreenShots/%s - %04u.png", modname, shotnum);			
 #elif SDL || WII
             sprintf(shotname, "%s/%s - %04u.png", screenShotsDir, modname, shotnum);
 #else

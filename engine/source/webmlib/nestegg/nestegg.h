@@ -9,6 +9,10 @@
 
 #include <stdint.h>
 
+#ifdef MORPHOS
+#undef tell
+#endif
+
 #if defined(__cplusplus)
 extern "C" {
 #endif

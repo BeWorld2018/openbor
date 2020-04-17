@@ -37838,7 +37838,7 @@ void init_videomodes(int log)
 
     // Use an alternative video.txt if there is one.  Some of these are long filenames; create your PAKs with borpak and you'll be fine.
 #define tryfile(X) if((tmp=openpackfile(X,packfile))!=-1) { closepackfile(tmp); filename=X; goto readfile; }
-#if WIN || LINUX
+#if WIN || LINUX || MORPHOS
     tryfile("data/videopc.txt");
 #elif WII
     tryfile("data/videowii.txt");

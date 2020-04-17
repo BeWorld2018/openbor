@@ -9,8 +9,8 @@
 #include <string.h>
 
 #include "halloc/halloc.h"
-#include "nestegg/nestegg.h"
 #include "globals.h"
+#include "nestegg/nestegg.h"
 
 /* EBML Elements */
 #define ID_EBML                 0x1a45dfa3

@@ -1143,7 +1143,11 @@ int sound_query_adpcm(char *artist, char *title)
 #if TREMOR || DC
 #define ov_decode(vf,buffer,length,bitstream) ov_read(vf,buffer,length,bitstream)
 #else
+#ifdef MORPHOS
+#define ov_decode(vf,buffer,length,bitstream) ov_read(vf,buffer,length,1,2,1,bitstream)
+#else
 #define ov_decode(vf,buffer,length,bitstream) ov_read(vf,buffer,length,0,2,1,bitstream)
+#endif
 #endif
 
 OggVorbis_File *oggfile;
