@@ -63,27 +63,48 @@ s_screen *pngToScreen(const void *data)
     png_set_sig_bytes(png_ptr, sig_read);
     png_read_info(png_ptr, info_ptr);
     png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, NULL, NULL);
+    png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, NULL, NULL);
 
-    png_set_strip_16(png_ptr);
-    png_set_packing(png_ptr);
-    if(color_type == PNG_COLOR_TYPE_PALETTE)
-    {
-        png_set_palette_to_rgb(png_ptr);
-    }
-    if(color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
+	if(bit_depth < 8)
     {
         png_set_expand_gray_1_2_4_to_8(png_ptr);
     }
-    if(png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
+	
+	if (bit_depth > 8)
+   		png_set_strip_16(png_ptr);
+    
+	png_set_packing(png_ptr);
+	
+	if(png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
     {
         png_set_tRNS_to_alpha(png_ptr);
+		if(color_type == PNG_COLOR_TYPE_RGB)
+			color_type = PNG_COLOR_TYPE_RGB_ALPHA;
     }
+	
+    if(color_type == PNG_COLOR_TYPE_PALETTE)
+    {
+        png_set_palette_to_rgb(png_ptr);
+						
+	}else if(color_type == PNG_COLOR_TYPE_RGB_ALPHA)
+    {
+		#if defined(WII) || defined(MORPHOS)
+		png_set_bgr(png_ptr);
+		png_set_swap_alpha(png_ptr);
+		#endif
+	}
+
+   	if (interlace_type != PNG_INTERLACE_NONE) {
+		png_set_interlace_handling(png_ptr);   
+   	}
+
 #if defined(WII) || defined(MORPHOS)
-    png_set_filler(png_ptr, 0xff, PNG_FILLER_BEFORE);
+	if (color_type != PNG_COLOR_TYPE_RGB_ALPHA)
+		png_set_filler(png_ptr, 0xff, PNG_FILLER_BEFORE);
 #else
     png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
 #endif
-
+	
     image = allocscreen(width, height, PIXEL_32);
     if(image == NULL)
     {
