@@ -63,7 +63,6 @@ s_screen *pngToScreen(const void *data)
     png_set_sig_bytes(png_ptr, sig_read);
     png_read_info(png_ptr, info_ptr);
     png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, NULL, NULL);
-    png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, NULL, NULL);
 
 	if(bit_depth < 8)
     {
