@@ -949,6 +949,12 @@ void control_update(s_playercontrols ** playercontrols, int numplayers)
 void control_rumble(int port, int ratio, int msec)
 {
     #if SDL
+	#ifdef __MORPHOS__
+	 if (joystick[port-1] != NULL ) {
+		 // Add Support Rumble for Joystick
+		 SDL_JoystickRumble(joystick[port-1], (Uint16)(ratio*65535),(Uint16)(ratio*65535), msec*10);
+	 } else
+	#endif
     if (joystick[port] != NULL && joystick_haptic[port] != NULL) {
         if(SDL_HapticRumblePlay(joystick_haptic[port], ratio, msec) != 0)
         {
