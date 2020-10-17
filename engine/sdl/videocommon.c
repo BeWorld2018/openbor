@@ -46,7 +46,9 @@ s_videomodes setupPreBlitProcessing(s_videomodes videomodes)
 	}
 	
 	// set up software scaling
+	#ifndef __MORPHOS_
 	if(savedata.swfilter && (savedata.hwscale >= 2.0 || savedata.fullscreen))
+	#endif
 	{
 		if (screen) SDL_FreeSurface(screen);
 		screen = SDL_CreateRGBSurface(0, videomodes.hRes*2, videomodes.vRes*2, 16, masks[1][0], masks[1][1], masks[1][2], masks[1][3]);
